@@ -1,7 +1,7 @@
 Jump, Card!
 -----------
 
-JumpCard is a library for creating cards that can jump around (such as these).
+JumpCard is a library for creating cards that can jump around.
 
 Unlike a pure CSS solution or other masonry library, these cards will animate to their new position and can be moved around (again, still animating).
 
