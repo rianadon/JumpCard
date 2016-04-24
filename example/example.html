@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<head>
+  <title>Jump Card example</title>
+  <link href="prism.css" rel="stylesheet" />
+  <link href="../dist/jumpCard.css" rel="stylesheet">
+  <link href="example-prefixed.css" rel="stylesheet">
+</head>
+<body>
+  <a href="https://github.com/rianadon/JumpCard" class="github-corner"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#70B7FD; color:#fff; position: absolute; top: 0; border: 0; right: 0;"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  <h1>Jump, Card!</h1>
+  <p class="explanation">
+    Try resizing the browser window or zooming in and out and watch the cards move around.<br>
+    You can also move them around by clicking / tapping and holding the cards' headers.
+  </p>
+  <main id="grid">
+    <div class="card">
+      <span class="card-header">About</span>
+     <p>
+       JumpCard is a library for creating cards that can jump around (such as these).
+      </p>
+      <p>
+        Unlike a pure CSS solution or other masonry library, these cards will animate to their new position and can be moved around (again, still animating).
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Usage</span>
+      <p>
+        There are 4 files in the <code>dist/</code> directory.
+      </p>
+      <p>
+        First off, you'll need a JavaScript file. <code>jumpCard.js</code> is the raw ES2015 version. Good luck on supporting more than one or two browsers.
+        There's also <code>jumpCard-compiled.js</code> and <code>jumpCard-compiled.min.js</code>, which are compiled with Babel.
+      </p>
+      <p>
+        Then you'll need a stylesheet, which would be <code>jumpCard.css</code>.
+        This is pretty minimal and only contains the needed animation and other random properties to make everything work, so you'll need to add your own CSS to make the cards pretty.
+        This example's stylesheet is a great starting point for doing so.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Getting Started</span>
+      <p>
+        Once you've downloaded the library, you'll need to add it to your html style.
+        You can either add the JavaScript and CSS to whatever scripts and stylesheets you already have, or just include them separately in your html as shown below.
+      </p>
+      <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;head&gt;
+  &lt;!-- Stuff goes here --&gt;
+  &lt;link href="jumpCard.css" rel="styleheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- More stuff goes here --&gt;
+  &lt;script src="jumpCard.js"&gt;&lt;/script&gt;
+&lt;/body&gt;</code></pre>
+    </div>
+    <div class="card">
+      <span class="card-header">Initialization</span>
+      <p>
+        Now that you've included the script, you'll need to choose an element as your parent element containing the cards (let's call it <code>foo</code>).
+        Then, create a new <code>JumpCardGrid</code> instance.
+      </p>
+      <pre><code class="language-javascript">var jumpGrid = new JumpCardGrid(foo);</code></pre>
+      <p>
+        Yippee! That's it! Now all the cards will jump around magically.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Options</span>
+      <p>
+        Along with the passing to parent element to the <code>JumpCardGrid</code> selector, you can also give an options object as shown below.
+      </p>
+      <pre><code class="language-javascript">var jumpGrid = new JumpCardGrid(foo, options);</code></pre>
+      <p>
+        See the following cards for all of the possible options.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Breakpoints</span>
+      <p>
+        The <code>breakPoints</code> option controls how many columns will be shown at which browser widths.
+        It defaults to <code class="language-javascript">[400, 800, 1300, 1900, 2600, 3400]</code> and must be an array.
+      </p>
+      <p>
+        The number of columns is calculated by finding the first element of the array which is greater than or equal to the window's <code>innerWidth</code> then adding <code class="language-javascript">1</code> to its index.
+      </p>
+      <p>
+        So, using the defaults, one column would be displayed if the window was <code>300px</code> wide, two if it was <code>600px</code> wide, and three if it was <code>1000px</code> wide.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Card Selector</span>
+      <p>
+        The <code>cardSelector</code> option controls the selector used to find all of the cards in the parent element used to initialize the grid.
+      </p>
+      <p>
+        It defaults to <code>.card</code>. In the case of this example, the default is used, so every element inside the <code>main</code> element whose class is <code>card</code> will be positioned by JumpCard.
+      </p>
+      <p>
+        This option can be used to show only certain cards, so setting it to <code>.card.show</code> and adding <code class="language-css code-nowrap">.card:not(.show) { display: none }</code> to your CSS would hide all cards that do not have the <code>show</code> class.
+      </p>
+      <p>
+        There's also the <code>cardClass</code> option, which sets the className to find and create new cards and <code>cardTag</code>, which sets the tag to be used for creating new cards.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Order</span>
+      <p>
+        The <code>order</code> option specifies the order in which the cards will be initially display. If it is <code class="language-javascript short">null</code>, which it defaults to, it will be automatically computed based on the order of the cards in the HTML.
+      </p>
+      <p>
+        The elements of the array correspond to the unique identifiers of the cards, which would be the <code>textContent</code> of the first element matching the <code>idSelector</code> option inside the card.
+      </p>
+      <p>
+        If the <code>idSelector</code> option is falsey, you'll have to manually set the <code>data-cardid</code> attribute on each card to whatever the <code>textContent</code> of the element matching <code>idSelector</code> would be.
+      </p>
+      <p>
+        You can retrieve this order at any time by calling a <code>JumpCardGrid</code>'s <code class="language-javascript short">getOrder()</code> method.
+    </div>
+    <div class="card">
+      <span class="card-header">User Sorting</span>
+      <p>
+        If the <code>sortable</code> option is set to <code class="language-javascript short">true</code>, the cards will be able to be moved around.
+      </p>
+      <p>
+        This moving will be triggered by an <code>onmousedown</code> or <code>ontouchstart</code> event on the first element in the card matching the <code>handleSelector</code> option.
+      </p>
+      <p>
+        There are also numerous functions in the options that will be called whenever an event related to moving the cards is triggered, as detailed below. Each of these functions will be called with two arguments: the card element to which this event pertains and the raw event.
+      </p>
+      <ul>
+        <li><code>omMoveStart</code>: When the moving starts</li>
+        <li><code>omMove</code>: When the cursor / touch point moves</li>
+        <li><code>onPositionChange</code>: When the card changes its position relative to the other cards</li>
+        <li><code>omMoveEnd</code>: When the card is released</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-header">Placeholder</span>
+      <p>
+        When cards are manually moved around, a placeholder will appear to designate where they will land.
+        This placeholder's tag name can be customized with the <code>placeholderTag</code> option (defaults to <code>div</code>, and its class will be set to the <code>placeholderClass</code> option (defaults to <code>placeholder</code>).
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Gutter</span>
+      <p>
+        The <code>gutter</code> option sets the amount of vertical space that will appear after each card.
+        In this example, each card has a margin of <code>12px</code>, so the gutter is set to <code class="language-javascript short">24</code>.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Manually rendering</span>
+      <p>
+        Calling <code class="language-javascript short">render()</code> on a <code>JumpCardGrid</code> instance will cause the cards' positions to be updated. Unlike calling <code class="language-javascript short">renderNow()</code>, the former will use the <code>requestAnimationFrame</code> function to debounce the call.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-header">Adding Cards</span>
+      <p>
+        The <code>JumpCardGrid</code> class has the method <code><span class="token function">add</span></code>, which will insert a new card either at the end or at the specified position and optionally rerender.
+        The arguments are listed below.
+      </p>
+      <ul>
+        <li><code>innerHTML</code>: If this is a string, the card's <code>innerHTML</code> will be set to the argument's value. Otherwise, it will call <code class="language-javascript code-nowrap ">card.appendChild(innerHTML)</code></li>
+        <li><code class="language-javascript short">name?</code>: The identifier for the card; If the argument is not given then the identifier will computed using the <code>idSelector</code> option</li>
+        <li><code class="language-javascript short">index = -1</code>: The index at which to insert the card into the order. If the index is less than 0, the card will be added to the end.</li>
+        <li><code class="language-javascript short">render = true</code>: Whether to recalculate the card positions</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-header">Removing Cards</span>
+      <p>
+        The <code>JumpCardGrid</code> class also has the method <code><span class="token function">remove</span></code>, which will insert a remove a card from the grid. Its arguments are as follows.
+      </p>
+      <ul>
+        <li><code>card</code>: The card element to be removed</li>
+        <li><code class="language-javascript short">removeElement = true</code>: Whether to remove the card from the DOM</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-header">All of the options</span>
+      <p>
+        As reference, here are all of the options and their default values as described here.
+      </p>
+      <pre><code class="language-javascript">{
+  breakpoints: [400, 800, 1300, 1900, 2600, 3400],
+  cardSelector: '.card',
+  cardClass: 'card',
+  cardTag: 'div',
+  placeholderTag: 'div',
+  placeholderClass: 'placeholder',
+  idSelector: '.card-header',
+  sortable: false,
+  handleSelector: '.card-handle',
+  order: [],
+  gutter: 24,
+  onMoveStart: () =&gt; {},
+  onMove: () =&gt; {},
+  onMoveEnd: () =&gt; {},
+  onPositionChange: () =&gt; {},
+}</code></pre>
+    </div>
+  </main>
+  <script src="../dist/jumpCard-compiled.js"></script>
+  <script src="prism.js"></script>
+  <script>
+    var jumpGrid = new JumpCardGrid(document.getElementById('grid'), {
+      breakpoints: [700, 1200, 1800, 2400, 3200],
+      sortable: true,
+      handleSelector: '.card-header',
+      onMoveStart: function(card, evt) {
+        var r = card.getBoundingClientRect();
+        card.style.transformOrigin = evt.clientX-r.left+'px '+(evt.clientY-r.top)+'px';
+      }
+    });
+  </script>
+</body>

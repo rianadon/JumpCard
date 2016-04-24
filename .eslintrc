@@ -1,0 +1,10 @@
+{
+  "extends": "airbnb/base",
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "rules": {
+    "consistent-return": 0,
+    "no-cond-assign": 0
+  }
+}

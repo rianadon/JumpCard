@@ -1,0 +1,19 @@
+.card {
+  position: absolute;
+  /* Arbitrary values so it doesn't take up the full screen */
+  left: 30%;
+  right: 30%;
+}
+
+.card.moving {
+  pointer-events: none;
+}
+
+[data-jumpready] > .card:not(.moving) {
+  transition: left 0.3s ease-out, right 0.3s ease-out, top 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.cardsmoving {
+  touch-callout: none;
+  user-select: none;
+}
