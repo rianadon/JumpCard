@@ -210,7 +210,11 @@
       handleSelector: '.card-header',
       onMoveStart: function(card, evt) {
         var r = card.getBoundingClientRect();
-        card.style.transformOrigin = evt.clientX-r.left+'px '+(evt.clientY-r.top)+'px';
+		if (evt instanceof MouseEvent) {
+	     card.style.transformOrigin = evt.clientX-r.left+'px '+(evt.clientY-r.top)+'px';
+	    } else {
+	      card.style.transformOrigin = evt.targetTouches[0].clientX-r.left+'px '+(evt.targetTouches[0].clientY-r.top)+'px';
+	    }
       }
     });
   </script>

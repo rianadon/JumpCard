@@ -8,6 +8,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 /* eslint no-param-reassign:0 */
 
 (function () {
@@ -90,6 +92,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     cards.forEach(function (card, n) {
       card.style.top = cch[n] + 'px';
     });
+    opts.element.style.height = Math.max.apply(Math, _toConsumableArray(columnHeights)) + 'px';
     clearTimeout(timeoutId);
     if (setReady) {
       opts.element.setAttribute('data-jumpReady', '');
@@ -106,6 +109,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       cards.forEach(function (card, n) {
         card.style.top = cch[n] + 'px';
       });
+      opts.element.style.height = Math.max.apply(Math, _toConsumableArray(columnHeights)) + 'px';
     }, 500);
     ticking = false;
   }
@@ -140,18 +144,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       card.style.width = window.getComputedStyle(card).width;
       card.style.right = 'auto';
 
-      var t = evt.pageY - parseInt(window.getComputedStyle(card).top, 10);
-      var l = evt.pageX - parseInt(window.getComputedStyle(card).left, 10);
+      var evt2 = evt instanceof MouseEvent ? evt : evt.targetTouches[0];
+      var t = evt2.pageY - parseInt(window.getComputedStyle(card).top, 10);
+      var l = evt2.pageX - parseInt(window.getComputedStyle(card).left, 10);
       var nt = 0; // For debouncing
 
       opts.onMoveStart(card, evt);
 
       function onMove(e) {
-        card.style.left = e.pageX - l + 'px';
-        card.style.top = e.pageY - t + 'px';
+        e.preventDefault();
+        var e2 = evt instanceof MouseEvent ? e : e.targetTouches[0];
+        card.style.left = e2.pageX - l + 'px';
+        card.style.top = e2.pageY - t + 'px';
         opts.onMove(card, e);
         if (new Date().getTime() > nt) {
-          var parent = e.target; // Element moved onto
+          var parent = e instanceof MouseEvent ? e.target : document.elementFromPoint(e2.clientX, e2.clientY); // Element moved onto
           if (parent.classList.contains('card') && !parent.classList.contains(opts.placeholderClass)) {
             var cid = parent.getAttribute('data-cardid');
             var ci = opts.order.indexOf(cid);
@@ -227,9 +234,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (opts.idSelector) {
             card.setAttribute('data-cardid', card.querySelector(opts.idSelector).textContent);
           }
-          var h = card.querySelector(opts.handleSelector);
-          h.addEventListener('mousedown', startMove(card));
-          h.addEventListener('touchstart', startMove(card));
+          if (opts.handleSelector) {
+            var h = card.querySelector(opts.handleSelector);
+            h.addEventListener('mousedown', startMove(card));
+            h.addEventListener('touchstart', startMove(card));
+          }
         }
       } catch (err) {
         _didIteratorError3 = true;
@@ -279,6 +288,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         } else {
           newCard.appendChild(innerHTML);
         }
+
+        if (opts.handleSelector) {
+          var h = newCard.querySelector(opts.handleSelector);
+          h.addEventListener('mousedown', startMove(newCard));
+          h.addEventListener('touchstart', startMove(newCard));
+        }
+
         if (!name) name = newCard.querySelector(opts.idSelector).textContent;
         newCard.setAttribute('data-cardid', name);
         opts.element.appendChild(newCard);

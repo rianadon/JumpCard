@@ -59,6 +59,7 @@
     cards.forEach((card, n) => {
       card.style.top = `${cch[n]}px`;
     });
+    opts.element.style.height = `${Math.max(...columnHeights)}px`;
     clearTimeout(timeoutId);
     if (setReady) {
       opts.element.setAttribute('data-jumpReady', '');
@@ -75,6 +76,7 @@
       cards.forEach((card, n) => {
         card.style.top = `${cch[n]}px`;
       });
+      opts.element.style.height = `${Math.max(...columnHeights)}px`;
     }, 500);
     ticking = false;
   }
@@ -109,18 +111,22 @@
       card.style.width = window.getComputedStyle(card).width;
       card.style.right = 'auto';
 
-      const t = evt.pageY - parseInt(window.getComputedStyle(card).top, 10);
-      const l = evt.pageX - parseInt(window.getComputedStyle(card).left, 10);
+      const evt2 = evt instanceof MouseEvent ? evt : evt.targetTouches[0];
+      const t = evt2.pageY - parseInt(window.getComputedStyle(card).top, 10);
+      const l = evt2.pageX - parseInt(window.getComputedStyle(card).left, 10);
       let nt = 0; // For debouncing
 
       opts.onMoveStart(card, evt);
 
       function onMove(e) {
-        card.style.left = `${e.pageX - l}px`;
-        card.style.top = `${e.pageY - t}px`;
+        e.preventDefault();
+        const e2 = evt instanceof MouseEvent ? e : e.targetTouches[0];
+        card.style.left = `${e2.pageX - l}px`;
+        card.style.top = `${e2.pageY - t}px`;
         opts.onMove(card, e);
         if (new Date().getTime() > nt) {
-          const parent = e.target; // Element moved onto
+          const parent = e instanceof MouseEvent ? e.target :
+            document.elementFromPoint(e2.clientX, e2.clientY); // Element moved onto
           if (parent.classList.contains('card') &&
             !parent.classList.contains(opts.placeholderClass)) {
             const cid = parent.getAttribute('data-cardid');
@@ -164,9 +170,11 @@
         if (opts.idSelector) {
           card.setAttribute('data-cardid', card.querySelector(opts.idSelector).textContent);
         }
-        const h = card.querySelector(opts.handleSelector);
-        h.addEventListener('mousedown', startMove(card));
-        h.addEventListener('touchstart', startMove(card));
+        if (opts.handleSelector) {
+          const h = card.querySelector(opts.handleSelector);
+          h.addEventListener('mousedown', startMove(card));
+          h.addEventListener('touchstart', startMove(card));
+        }
       }
       if (opts.order.length === 0) {
         opts.order = Array.from(element.querySelectorAll(opts.cardSelector))
@@ -190,6 +198,13 @@
       } else {
         newCard.appendChild(innerHTML);
       }
+
+      if (opts.handleSelector) {
+        const h = newCard.querySelector(opts.handleSelector);
+        h.addEventListener('mousedown', startMove(newCard));
+        h.addEventListener('touchstart', startMove(newCard));
+      }
+
       if (!name) name = newCard.querySelector(opts.idSelector).textContent;
       newCard.setAttribute('data-cardid', name);
       opts.element.appendChild(newCard);
