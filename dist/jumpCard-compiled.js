@@ -33,6 +33,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     onMoveEnd: function onMoveEnd() {},
     onPositionChange: function onPositionChange() {}
   };
+  var scrollLeft = void 0,
+      scrollTop = void 0;
 
   var setReady = true;
 
@@ -147,6 +149,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var evt2 = evt instanceof MouseEvent ? evt : evt.targetTouches[0];
       var t = evt2.pageY - parseInt(window.getComputedStyle(card).top, 10);
       var l = evt2.pageX - parseInt(window.getComputedStyle(card).left, 10);
+      var st = scrollTop;
+      var sl = scrollLeft;
+
       var nt = 0; // For debouncing
 
       opts.onMoveStart(card, evt);
@@ -154,8 +159,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       function onMove(e) {
         e.preventDefault();
         var e2 = evt instanceof MouseEvent ? e : e.targetTouches[0];
-        card.style.left = e2.pageX - l + 'px';
-        card.style.top = e2.pageY - t + 'px';
+        card.style.left = e2.pageX + scrollLeft - l - sl + 'px';
+        card.style.top = e2.pageY + scrollTop - t - st + 'px';
         opts.onMove(card, e);
         if (new Date().getTime() > nt) {
           var parent = e instanceof MouseEvent ? e.target : document.elementFromPoint(e2.clientX, e2.clientY); // Element moved onto
@@ -289,11 +294,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           newCard.appendChild(innerHTML);
         }
 
-        if (opts.handleSelector) {
-          var h = newCard.querySelector(opts.handleSelector);
-          h.addEventListener('mousedown', startMove(newCard));
-          h.addEventListener('touchstart', startMove(newCard));
-        }
+        this.addSortListeners(newCard);
 
         if (!name) name = newCard.querySelector(opts.idSelector).textContent;
         newCard.setAttribute('data-cardid', name);
@@ -312,6 +313,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         if (removeElement) card.remove();
       }
     }, {
+      key: 'addSortListeners',
+      value: function addSortListeners(card) {
+        if (opts.handleSelector) {
+          var h = card.querySelector(opts.handleSelector);
+          h.addEventListener('mousedown', startMove(card));
+          h.addEventListener('touchstart', startMove(card));
+        }
+      }
+    }, {
       key: 'render',
       value: function render() {
         resizeCaller();
@@ -320,6 +330,17 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       key: 'renderNow',
       value: function renderNow() {
         resize();
+      }
+    }, {
+      key: 'setScroll',
+      value: function setScroll(x, y) {
+        scrollLeft = x;
+        scrollTop = y;
+      }
+    }, {
+      key: 'setCardSelector',
+      value: function setCardSelector(selector) {
+        opts.cardSelector = selector;
       }
     }]);
 

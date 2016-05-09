@@ -21,6 +21,7 @@
     onMoveEnd: () => {},
     onPositionChange: () => {},
   };
+  let scrollLeft, scrollTop;
 
   let setReady = true;
 
@@ -114,6 +115,9 @@
       const evt2 = evt instanceof MouseEvent ? evt : evt.targetTouches[0];
       const t = evt2.pageY - parseInt(window.getComputedStyle(card).top, 10);
       const l = evt2.pageX - parseInt(window.getComputedStyle(card).left, 10);
+      const st = scrollTop;
+      const sl = scrollLeft;
+
       let nt = 0; // For debouncing
 
       opts.onMoveStart(card, evt);
@@ -121,8 +125,8 @@
       function onMove(e) {
         e.preventDefault();
         const e2 = evt instanceof MouseEvent ? e : e.targetTouches[0];
-        card.style.left = `${e2.pageX - l}px`;
-        card.style.top = `${e2.pageY - t}px`;
+        card.style.left = `${e2.pageX + scrollLeft - l - sl}px`;
+        card.style.top = `${e2.pageY + scrollTop - t - st}px`;
         opts.onMove(card, e);
         if (new Date().getTime() > nt) {
           const parent = e instanceof MouseEvent ? e.target :
@@ -199,11 +203,7 @@
         newCard.appendChild(innerHTML);
       }
 
-      if (opts.handleSelector) {
-        const h = newCard.querySelector(opts.handleSelector);
-        h.addEventListener('mousedown', startMove(newCard));
-        h.addEventListener('touchstart', startMove(newCard));
-      }
+      this.addSortListeners(newCard);
 
       if (!name) name = newCard.querySelector(opts.idSelector).textContent;
       newCard.setAttribute('data-cardid', name);
@@ -217,11 +217,25 @@
       opts.order.splice(opts.order.indexOf(id), 1);
       if (removeElement) card.remove();
     }
+    addSortListeners(card) {
+      if (opts.handleSelector) {
+        const h = card.querySelector(opts.handleSelector);
+        h.addEventListener('mousedown', startMove(card));
+        h.addEventListener('touchstart', startMove(card));
+      }
+    }
     render() {
       resizeCaller();
     }
     renderNow() {
       resize();
+    }
+    setScroll(x, y) {
+      scrollLeft = x;
+      scrollTop = y;
+    }
+    setCardSelector(selector) {
+      opts.cardSelector = selector;
     }
   }
   window.JumpCardGrid = JumpCardGrid;

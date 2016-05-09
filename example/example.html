@@ -177,6 +177,27 @@
         <li><code class="language-javascript short">removeElement = true</code>: Whether to remove the card from the DOM</li>
       </ul>
     </div>
+		<div class="card">
+      <span class="card-header">Changing the Card Selector</span>
+      <p>
+        To dynamically change the <code>cardSelector</code> option, call <code class="language-javascript short">setCardSelector(selector)</code>.
+			</p>
+			<p>
+				This is useful if, for example, there's a button to only show cards with a "favorite" class or atribute.
+      </p>
+    </div>
+		<div class="card">
+      <span class="card-header">Scrolling while User Sorting</span>
+      <p>
+        As the library calculates positions relative to the viewport when cards are moved around, a <code>JumpCardGrid</code> instance must be notified when the page is scrolled.
+				To do this, bind an event listener to whatever scrolls then call <code class="language-javascript short">setScroll(x, y)</code>, as demonstrated in the snippet below.
+      </p>
+      <pre><code class="language-javascript">const jumpGrid  = new JumpCardGrid(element, options);
+
+window.addEventListener('scroll', function() {
+	jumpGrid.setScroll(document.body.scrollLeft, document.body.scrollTop);
+}</code></pre>
+    </div>
     <div class="card">
       <span class="card-header">All of the options</span>
       <p>
