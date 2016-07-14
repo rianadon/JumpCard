@@ -33,8 +33,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     onMoveEnd: function onMoveEnd() {},
     onPositionChange: function onPositionChange() {}
   };
-  var scrollLeft = void 0,
-      scrollTop = void 0;
+  var scrollLeft = 0;
+  var scrollTop = 0;
 
   var setReady = true;
 
@@ -81,18 +81,35 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
       return ai - bi;
     });
-    cards.forEach(function (card, n) {
+    var sizes = cards.map(function (card) {
+      return +card.getAttribute('data-cardsize') || 1;
+    });
+    var n = 0;
+    cards.forEach(function (card, i) {
       var col = n % columns;
       card.style.left = 100 / columns * col + '%';
-      card.style.right = 100 / columns * (columns - col - 1) + '%';
+      card.style.right = 100 / columns * (columns - col - sizes[i]) + '%';
+      n += sizes[i];
     });
-    cards.forEach(function (card, n) {
-      var col = n % columns;
-      cch.push(columnHeights[col]);
-      columnHeights[col] += card.offsetHeight + opts.gutter;
+    n = -1;
+    cards.forEach(function (card, i) {
+      var chs = [];
+      for (var m = 0; m < sizes[i]; m++) {
+        var col = ++n % columns;
+        chs.push(columnHeights[col]);
+      }
+      n -= sizes[i];
+      var ch = Math.max.apply(Math, chs);
+      for (var _m = 0; _m < sizes[i]; _m++) {
+        var _col = ++n % columns;
+        cch.push(ch);
+        columnHeights[_col] = ch + card.offsetHeight + opts.gutter;
+      }
     });
-    cards.forEach(function (card, n) {
+    n = 0;
+    cards.forEach(function (card, i) {
       card.style.top = cch[n] + 'px';
+      n += sizes[i];
     });
     opts.element.style.height = Math.max.apply(Math, _toConsumableArray(columnHeights)) + 'px';
     clearTimeout(timeoutId);
@@ -102,14 +119,26 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
     timeoutId = setTimeout(function () {
       cch.length = 0;
-      cards.forEach(function (card, n) {
-        var col = n % columns;
-        if (n < columns) columnHeights[col] = 0;
-        cch.push(columnHeights[col]);
-        columnHeights[col] += card.offsetHeight + opts.gutter;
+      n = -1;
+      cards.forEach(function (card, i) {
+        var chs = [];
+        for (var m = 0; m < sizes[i]; m++) {
+          var col = ++n % columns;
+          if (n < columns) columnHeights[col] = 0;
+          chs.push(columnHeights[col]);
+        }
+        n -= sizes[i];
+        var ch = Math.max.apply(Math, chs);
+        for (var _m2 = 0; _m2 < sizes[i]; _m2++) {
+          var _col2 = ++n % columns;
+          cch.push(ch);
+          columnHeights[_col2] = ch + card.offsetHeight + opts.gutter;
+        }
       });
-      cards.forEach(function (card, n) {
+      n = 0;
+      cards.forEach(function (card, i) {
         card.style.top = cch[n] + 'px';
+        n += sizes[i];
       });
       opts.element.style.height = Math.max.apply(Math, _toConsumableArray(columnHeights)) + 'px';
     }, 500);
@@ -177,8 +206,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       }
       function onUp(e) {
-        document.removeEventListener('mousemove', onMove, true);
-        document.removeEventListener('touchmove', onMove, true);
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('touchmove', onMove);
         opts.order[opts.order.indexOf('placeholder')] = id;
         card.classList.remove('moving');
         document.body.classList.remove('cardsmoving');
@@ -189,8 +218,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         resize();
         card.style.width = 'auto';
       }
-      document.addEventListener('mousemove', onMove, true);
-      document.addEventListener('touchmove', onMove, true);
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove);
       document.addEventListener('mouseup', onUp);
       document.addEventListener('touchend', onUp);
     };

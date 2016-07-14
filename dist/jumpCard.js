@@ -21,7 +21,8 @@
     onMoveEnd: () => {},
     onPositionChange: () => {},
   };
-  let scrollLeft, scrollTop;
+  let scrollLeft = 0;
+  let scrollTop = 0;
 
   let setReady = true;
 
@@ -47,18 +48,33 @@
       }
       return ai - bi;
     });
-    cards.forEach((card, n) => {
+    const sizes = cards.map(card => +card.getAttribute('data-cardsize') || 1);
+    let n = 0;
+    cards.forEach((card, i) => {
       const col = n % columns;
       card.style.left = `${100 / columns * col}%`;
-      card.style.right = `${100 / columns * (columns - col - 1)}%`;
+      card.style.right = `${100 / columns * (columns - col - sizes[i])}%`;
+      n += sizes[i];
     });
-    cards.forEach((card, n) => {
-      const col = n % columns;
-      cch.push(columnHeights[col]);
-      columnHeights[col] += card.offsetHeight + opts.gutter;
+    n = -1;
+    cards.forEach((card, i) => {
+      const chs = [];
+      for (let m = 0; m < sizes[i]; m++) {
+        const col = ++n % columns;
+        chs.push(columnHeights[col]);
+      }
+      n -= sizes[i];
+      const ch = Math.max(...chs);
+      for (let m = 0; m < sizes[i]; m++) {
+        const col = ++n % columns;
+        cch.push(ch);
+        columnHeights[col] = ch + card.offsetHeight + opts.gutter;
+      }
     });
-    cards.forEach((card, n) => {
+    n = 0;
+    cards.forEach((card, i) => {
       card.style.top = `${cch[n]}px`;
+      n += sizes[i];
     });
     opts.element.style.height = `${Math.max(...columnHeights)}px`;
     clearTimeout(timeoutId);
@@ -68,14 +84,26 @@
     }
     timeoutId = setTimeout(() => {
       cch.length = 0;
-      cards.forEach((card, n) => {
-        const col = n % columns;
-        if (n < columns) columnHeights[col] = 0;
-        cch.push(columnHeights[col]);
-        columnHeights[col] += card.offsetHeight + opts.gutter;
+      n = -1;
+      cards.forEach((card, i) => {
+        const chs = [];
+        for (let m = 0; m < sizes[i]; m++) {
+          const col = ++n % columns;
+          if (n < columns) columnHeights[col] = 0;
+          chs.push(columnHeights[col]);
+        }
+        n -= sizes[i];
+        const ch = Math.max(...chs);
+        for (let m = 0; m < sizes[i]; m++) {
+          const col = ++n % columns;
+          cch.push(ch);
+          columnHeights[col] = ch + card.offsetHeight + opts.gutter;
+        }
       });
-      cards.forEach((card, n) => {
+      n = 0;
+      cards.forEach((card, i) => {
         card.style.top = `${cch[n]}px`;
+        n += sizes[i];
       });
       opts.element.style.height = `${Math.max(...columnHeights)}px`;
     }, 500);
@@ -145,8 +173,8 @@
         }
       }
       function onUp(e) {
-        document.removeEventListener('mousemove', onMove, true);
-        document.removeEventListener('touchmove', onMove, true);
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('touchmove', onMove);
         opts.order[opts.order.indexOf('placeholder')] = id;
         card.classList.remove('moving');
         document.body.classList.remove('cardsmoving');
@@ -157,8 +185,8 @@
         resize();
         card.style.width = 'auto';
       }
-      document.addEventListener('mousemove', onMove, true);
-      document.addEventListener('touchmove', onMove, true);
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove);
       document.addEventListener('mouseup', onUp);
       document.addEventListener('touchend', onUp);
     };

@@ -1,6 +1,6 @@
 {
   "name": "jumpcard",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "A library for creating animated cards",
   "scripts": {
     "build": "npm run build:js && npm run build:css",
